@@ -1,0 +1,12 @@
+services:
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:2019-CU28-ubuntu-20.04"
+    entrypoint: /mssql/entrypoint.sh
+    command: /opt/mssql/bin/sqlservr
+    environment:
+      SA_PASSWORD: "Your_password123!"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - ./mssql:/mssql
+    ports:
+      - "15785:1433"
