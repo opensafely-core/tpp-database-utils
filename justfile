@@ -28,6 +28,9 @@ test *args:
     uv run coverage run --module pytest {{ args }}
     uv run coverage report || uv run coverage html
 
+# run the test suite inside a docker container
+test-docker:
+    docker compose up --build --remove-orphans --exit-code-from prod-test
 
 format *args=".":
     uv run ruff format --check {{ args }}
