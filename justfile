@@ -43,7 +43,7 @@ fix:
     uv run ruff check --fix .
     uv run ruff format .
 
-
-# Run the dev project
-run:
-    echo "Not implemented yet"
+# Run the project locally
+# Nb. you will probably need a relevant database server for this to be useful
+run *args="":
+    uv run tpp_database_utils/main.py {{ args }}
