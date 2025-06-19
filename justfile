@@ -10,11 +10,9 @@ export DEFAULT_PYTHON := if os_family() == "unix" { "python3.11" } else { "pytho
 default:
     @"{{ just_executable() }}" --list
 
-
 # clean up temporary files
 clean:
     rm -rf .venv
-
 
 # ensure valid virtualenv
 virtualenv:
@@ -69,7 +67,6 @@ prodenv: requirements-prod (_install 'prod')
 # ensure dev requirements installed and up to date
 devenv: prodenv requirements-dev (_install 'dev') && install-precommit
 
-
 # ensure precommit is installed
 install-precommit:
     #!/usr/bin/env bash
@@ -111,7 +108,6 @@ lint *args=".": devenv
 
 # run the various dev checks but does not change any files
 check: format lint
-
 
 # fix formatting and import sort ordering
 fix: devenv
