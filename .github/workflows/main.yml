@@ -39,7 +39,7 @@ jobs:
       - name: Run tests
 #       env:  # Add environment variables required for tests
         run: |
-          just test
+          just test-docker
 
   lint-dockerfile:
     runs-on: ubuntu-latest
