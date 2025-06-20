@@ -34,3 +34,20 @@ Or run the tests in a local docker container with:
 ```bash
 just test-docker
 ```
+
+## Running locally
+
+To run the commands as they would be run in production, you could:
+
+```bash
+# build the image
+docker build . -t tpp-database-utils
+
+# start a db server:
+docker compose up mssql
+
+# run a command
+export DATABASE_URL='mssql://SA:Your_password123!@localhost:15785/Test_OpenCorona'
+export TEMP_DATABASE_NAME="OPENCoronaTempTables"
+docker run --rm -e DATABASE_URL -e TEMP_DATABASE_NAME -t --network=host tpp-database-utils in_maintenance_mode
+```
