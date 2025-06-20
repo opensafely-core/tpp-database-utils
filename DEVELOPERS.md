@@ -7,26 +7,30 @@
 Follow installation instructions from the [Just Programmer's Manual](https://just.systems/man/en/chapter_4.html) for your OS.
 
 Add completion for your shell. E.g. for bash:
-```
+```bash
 source <(just --completions bash)
 ```
 
 Show all available commands
-```
-just #  shortcut for just --list
+```bash
+just
 ```
 
+## Production environment
 
-## Local development environment
-
-
-Set up a local development environment with:
-```
-just dev_setup
-```
+At the time of writing, the required environment variables will be provided by
+the job-runner agent's [inject_db_secrets()](https://github.com/opensafely-core/job-runner/blob/a62ce3cc7277cfdbf689bea2e31d0123227a403c/jobrunner/agent/main.py#L336).
 
 ## Tests
-Run the tests with:
-```
+
+Run the tests locally with:
+```bash
+docker compose up -d mssql
 just test <args>
+docker compose down mssql
+```
+
+Or run the tests in a local docker container with:
+```bash
+just test-docker
 ```
