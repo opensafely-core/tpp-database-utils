@@ -1,0 +1,35 @@
+name: Build and publish assets
+on:
+  push:
+    branches:
+      - main
+  # this allows us to trigger manually
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: tpp-database-utils
+  IMAGE_ID: ghcr.io/opensafely-core/tpp-database-utils
+
+permissions:
+  packages: write
+  contents: write
+
+jobs:
+  build-and-publish-docker-image:
+    runs-on: ubuntu-latest
+    name: Build and publish docker image
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up Just
+      uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6
+    - name: Build image
+      run: just build-docker
+    - name: Test image
+      run: just test-docker
+    - name: Log into GitHub Container Registry
+      run: docker login https://ghcr.io -u ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
+    - name: Push image to GitHub Container Registry
+      run: |
+        docker tag "$IMAGE_NAME" "$IMAGE_ID:latest"
+        docker push "$IMAGE_ID:latest"
