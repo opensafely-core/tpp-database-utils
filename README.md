@@ -1,28 +1,11 @@
 # tpp-database-utils
 
-This is a template for an OpenSAFELY Core repository.
+These are some utilities for interacting with an OpenSAFELY TPP database. It contains:
 
-Put your project description here.
+* a check for "database maintenance mode"
+* an importer for a custom medication dictionary that is used to work around some observed data quality errors.
 
-New repo checklist:
-- [ ] Does the repo require a Dockerfile?
-  If not, delete:
-  - Dockerfile -
-  - .dockerignore
-  - hadolint pre-commit hook from `.pre-commit-config.yaml`
-  - `lint-dockerfile` action from `.github/workflows/main.yml`
-- [ ] Is this a Django project?
-  If so, you probably need to add the following per-file ignores to `.flake8`
-  ```
-  per-file-ignores =
-    manage.py:INP001
-    gunicorn.conf.py:INP001
-  ```
-- [ ] Will this project be installed with pip?
-  If so, delete `requirements.prod.in` and switch references in the `justfile` to `pyproject.toml`
-- [ ] Update DEVELOPERS.md with any project-specific requirements and commands
-- [ ] Update commands in `justfile`
-
+This is packaged as a docker container and run inside the secure environment by the [job-runner](https://github.com/opensafely-core/job-runner).
 
 ## Developer docs
 
