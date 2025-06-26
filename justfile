@@ -32,6 +32,9 @@ test *args:
 test-docker:
     docker compose up --build --remove-orphans --exit-code-from prod-test
 
+build-docker:
+    docker build . -t tpp-database-utils
+
 format *args=".":
     uv run ruff format --check {{ args }}
 
