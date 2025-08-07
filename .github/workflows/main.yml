@@ -10,8 +10,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-# Temp comment
-      - uses: "opensafely-core/setup-action@8309ec8eb730c5b342dd496a09392f95bedd2fb0"
+      - uses: "opensafely-core/setup-action@optional-cache"
         with:
           python-version: "3.11"
           install-just: true
