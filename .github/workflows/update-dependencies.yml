@@ -10,8 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: "opensafely-core/setup-action@8309ec8eb730c5b342dd496a09392f95bedd2fb0"
+    - uses: "opensafely-core/setup-action@v1"
       with:
+        cache: null
         python-version: "3.11"
         install-just: true
     - name: Install uv
