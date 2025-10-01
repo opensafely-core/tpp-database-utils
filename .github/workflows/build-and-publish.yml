@@ -20,7 +20,7 @@ jobs:
     name: Build and publish docker image
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Set up Just
       uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff
     - name: Build image
