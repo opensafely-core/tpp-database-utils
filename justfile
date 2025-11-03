@@ -4,27 +4,97 @@ set dotenv-load := true
 default:
     @"{{ just_executable() }}" --list
 
+# Create a valid .env if none exists
+_dotenv:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [[ ! -f .env ]]; then
+      echo "No '.env' file found; creating a default '.env' from 'dotenv-sample'"
+      cp dotenv-sample .env
+    fi
+
+# Check if a .env exists
+# Use this (rather than _dotenv or devenv) for recipes that require that a .env file exists.
+# just will not pick up environment variables from a .env that it's just created,
+# and there isn't an easy way to load those into the environment, so we just
+
+# prompt the user to run just devenv to set up their local environment properly.
+_checkenv:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [[ ! -f .env ]]; then
+        echo "No '.env' file found; run 'just devenv' to create one"
+        exit 1
+    fi
+
 # clean up temporary files
 clean:
-    uv clean
+    rm -rf .venv
 
-# ensure valid virtualenv
-virtualenv:
-    uv venv
+# Install production requirements into and remove extraneous packages from venv
+prodenv:
+    uv sync --no-dev
 
-# ensure precommit is installed
+# && dependencies are run after the recipe has run. Needs just>=0.9.9. This is
+# a killer feature over Makefiles.
+
+# Install dev requirements into venv without removing extraneous packages
+devenv: _dotenv && install-precommit
+    uv sync --inexact
+
+# Ensure precommit is installed
 install-precommit:
-    uv run pre-commit install
+    #!/usr/bin/env bash
+    set -euo pipefail
 
-# Upgrade all dev and prod dependencies.
+    BASE_DIR=$(git rev-parse --show-toplevel)
+    test -f $BASE_DIR/.git/hooks/pre-commit || uv run pre-commit install
+
+# Upgrade a single package to the latest version as of the cutoff in pyproject.toml
+upgrade-package package: && devenv
+    uv lock --upgrade-package {{ package }}
+
+# Upgrade all packages to the latest versions as of the cutoff in pyproject.toml
+upgrade-all: && devenv
+    uv lock --upgrade
+
+# Move the cutoff date in pyproject.toml to N days ago (default: 7) at midnight UTC
+bump-uv-cutoff days="7":
+    #!/usr/bin/env -S uvx --with tomlkit python3
+
+    import datetime
+    import tomlkit
+
+    with open("pyproject.toml", "rb") as f:
+        content = tomlkit.load(f)
+
+    new_datetime = (
+        datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=int("{{ days }}"))
+    ).replace(hour=0, minute=0, second=0, microsecond=0)
+    new_timestamp = new_datetime.strftime("%Y-%m-%dT%H:%M:%SZ")
+    if existing_timestamp := content["tool"]["uv"].get("exclude-newer"):
+        if new_datetime < datetime.datetime.fromisoformat(existing_timestamp):
+            print(
+                f"Existing cutoff {existing_timestamp} is more recent than {new_timestamp}, not updating."
+            )
+            exit(0)
+    content["tool"]["uv"]["exclude-newer"] = new_timestamp
+
+    with open("pyproject.toml", "w") as f:
+        tomlkit.dump(content, f)
+
 # This is the default input command to update-dependencies action
 # https://github.com/bennettoxford/update-dependencies-action
-update-dependencies:
-    uv sync
+
+# Bump the timestamp cutoff to midnight UTC 7 days ago and upgrade all dependencies
+update-dependencies: bump-uv-cutoff upgrade-all
 
 # *args is variadic, 0 or more. This allows us to do `just test -k match`, for example.
+
 # Run the tests
-test *args:
+test *args: _checkenv
     uv run coverage run --module pytest {{ args }}
     uv run coverage report || uv run coverage html
 
@@ -38,18 +108,66 @@ build-docker:
 format *args=".":
     uv run ruff format --check {{ args }}
 
-lint *args=".":
-    uv run ruff check {{ args }}
+lint *args:
+    uv run ruff check {{ args }} .
 
-# run the various dev checks but does not change any files
-check: format lint
+lint-actions:
+    docker run --rm -v $(pwd):/repo:ro --workdir /repo rhysd/actionlint:1.7.8 -color
 
-# fix formatting and import sort ordering
+# Run the various dev checks but does not change any files
+check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    failed=0
+
+    check() {
+      echo -e "\e[1m=> ${1}\e[0m"
+      rc=0
+      # Run it
+      eval $1 || rc=$?
+      # Increment the counter on failure
+      if [[ $rc != 0 ]]; then
+        failed=$((failed + 1))
+        # Add spacing to separate the error output from the next check
+        echo -e "\n"
+      fi
+    }
+
+    check "just check-lockfile"
+    check "just format"
+    check "just lint"
+    check "just lint-actions"
+    test -d docker/ && check "just docker/lint"
+
+    if [[ $failed > 0 ]]; then
+      echo -en "\e[1;31m"
+      echo "   $failed checks failed"
+      echo -e "\e[0m"
+      exit 1
+    fi
+
+# validate uv.lock
+check-lockfile:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Make sure dates in pyproject.toml and uv.lock are in sync
+    unset UV_EXCLUDE_NEWER
+    rc=0
+    uv lock --check || rc=$?
+    if test "$rc" != "0" ; then
+        echo "Timestamp cutoffs in uv.lock must match those in pyproject.toml. See DEVELOPERS.md for details and hints." >&2
+        exit $rc
+    fi
+
+# Fix formatting, import sort ordering, and justfile
 fix:
     uv run ruff check --fix .
     uv run ruff format .
+    just --fmt --unstable
 
 # Run the project locally
+
 # Nb. you will probably need a relevant database server for this to be useful
 run *args="":
     uv run tpp_database_utils/main.py {{ args }}
