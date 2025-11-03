@@ -98,13 +98,6 @@ test *args: _checkenv
     uv run coverage run --module pytest {{ args }}
     uv run coverage report || uv run coverage html
 
-# run the test suite inside a docker container
-test-docker:
-    docker compose up --build --remove-orphans --exit-code-from prod-test
-
-build-docker:
-    docker build . -t tpp-database-utils
-
 format *args=".":
     uv run ruff format --check {{ args }}
 

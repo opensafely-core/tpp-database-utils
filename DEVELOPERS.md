@@ -41,7 +41,7 @@ To run the commands as they would be run in production, you could:
 
 ```bash
 # build the image
-docker build . -t tpp-database-utils
+just build-docker
 
 # start a db server:
 docker compose up mssql
