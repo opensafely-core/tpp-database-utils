@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This is the same as `just test` but doesn't require `just` inside the container
-
-uv run coverage run --module pytest
-uv run coverage report || uv run coverage html
+# Run without uv to avoid re-syncing. Dependencies are installed in the
+# docker image
+coverage run --module pytest
+coverage report || coverage html

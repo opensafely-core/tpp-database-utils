@@ -4,11 +4,16 @@ version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = ["pymssql>=2.3.4"]
 
+# Note: any `exclude-newer-package` timestamps should be removed if > 7 days old
+# See https://github.com/opensafely-core/repo-template/blob/main/DEVELOPERS.md for details
+[tool.uv]
+exclude-newer = "2025-10-27T00:00:00Z"
+required-version = ">=0.9"
+exclude-newer-package = {}
+
 [dependency-groups]
 dev = [
     "coverage>=7.9.0",
-    "pip==25.0.1",
-    "pip-tools>=7.4.1",
     "pre-commit>=4.2.0",
     "pytest>=8.4.0",
     "pyyaml>=6.0.2",
