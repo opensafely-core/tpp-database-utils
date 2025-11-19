@@ -7,7 +7,7 @@ dependencies = ["pymssql>=2.3.4"]
 # Note: any `exclude-newer-package` timestamps should be removed if > 7 days old
 # See https://github.com/opensafely-core/repo-template/blob/main/DEVELOPERS.md for details
 [tool.uv]
-exclude-newer = "2025-11-05T00:00:00Z"
+exclude-newer = "2025-11-12T00:00:00Z"
 required-version = ">=0.9"
 exclude-newer-package = {}
 
