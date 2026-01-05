@@ -30,10 +30,14 @@ def get_custom_medication_dictionary(tpp_connection, temp_database_name):
     print(current_dictionary_contents)
 
 
+def error(msg):
+    print(msg, file=sys.stderr)
+    sys.exit(1)
+
+
 def main():
     if len(sys.argv) < 2:
-        print("Please specify a command to run")
-        return
+        error("Please specify a command to run")
 
     command = sys.argv[1]
 
@@ -51,7 +55,7 @@ def main():
             get_custom_medication_dictionary(tpp_connection, temp_database_name)
 
         case _:
-            print("Unknown command")
+            error("Unknown command")
 
 
 if __name__ == "__main__":
