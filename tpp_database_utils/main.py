@@ -1,6 +1,7 @@
 import os
 import sys
 
+import confirm_hes_cutoff_date
 import maintenance_mode
 from custom_medication_dictionary import (
     CustomMedicationDictionary,
@@ -30,6 +31,13 @@ def get_custom_medication_dictionary(tpp_connection, temp_database_name):
     print(current_dictionary_contents)
 
 
+def hes_cutoff_date_check(tpp_connection, expected_activity_month):
+    if confirm_hes_cutoff_date.check(tpp_connection, expected_activity_month):
+        print("OK")
+    else:
+        print("FAILED")
+
+
 def error(msg):
     print(msg, file=sys.stderr)
     sys.exit(1)
@@ -53,6 +61,10 @@ def main():
         case "get_custom_medication_dictionary":
             temp_database_name = os.environ["TEMP_DATABASE_NAME"]
             get_custom_medication_dictionary(tpp_connection, temp_database_name)
+
+        case "hes_cutoff_date_check":
+            expected_activity_month = sys.argv[2]
+            hes_cutoff_date_check(tpp_connection, expected_activity_month)
 
         case _:
             error("Unknown command")
