@@ -29,6 +29,6 @@ pymssql==2.3.11
 pytest==9.0.2
 pyyaml==6.0.3
     # via pre-commit
-ruff==0.14.11
+ruff==0.14.13
 virtualenv==20.36.1
     # via pre-commit
