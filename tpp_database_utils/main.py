@@ -10,12 +10,13 @@ from mssql_connection import pymssql_connect
 
 
 def in_maintenance_mode(tpp_connection):
-    mode = maintenance_mode.in_maintenance_mode(tpp_connection)
-
+    mode, build_count = maintenance_mode.in_maintenance_mode(tpp_connection)
     # This should be the only output on stdout,
     # anything else needs to be on stderr
     if mode:
-        print("db-maintenance")
+        print(f"db-maintenance;{build_count}")
+    else:
+        print(f"none;{build_count}")
 
 
 def update_custom_medication_dictionary(tpp_connection, temp_database_name):
