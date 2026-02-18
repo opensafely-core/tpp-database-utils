@@ -4,7 +4,7 @@ cfgv==3.5.0
     # via pre-commit
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
-coverage==7.13.3
+coverage==7.13.4
 distlib==0.4.0
     # via virtualenv
 filelock==3.20.3
