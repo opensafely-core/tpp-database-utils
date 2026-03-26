@@ -268,11 +268,13 @@ def create_coded_event_snomed_table(tpp_connection):
 def test_in_maintenance_mode(
     tpp_connection,
     build_progress_factory,
+    cleanup_coded_event_snomed_table,
     description,
     events,
     is_in_maintenance_mode,
     expected_build_count,
 ):
+    create_coded_event_snomed_table(tpp_connection)
     for event in events:
         build_progress_factory(event)
     verify_build_progress_count(tpp_connection, events)
