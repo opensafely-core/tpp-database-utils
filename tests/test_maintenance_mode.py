@@ -208,6 +208,27 @@ def create_coded_event_snomed_table(tpp_connection):
             1,
         ),
         (
+            "Swap Table complete but CodedEvent_SNOMED not started",
+            [
+                (
+                    "OpenSAFELY",
+                    "2025-06-12T14:25:10",
+                    "2025-06-12T14:25:10",
+                    "9999-12-31T00:00:00",
+                    None,
+                ),
+                (
+                    "Swap Tables",
+                    "2025-06-12T14:25:10",
+                    "2025-06-12T14:25:10",
+                    "2025-06-12T14:30:10",
+                    None,
+                ),
+            ],
+            True,
+            1,
+        ),
+        (
             "Building CodedEvent_SNOMED",
             [
                 (
