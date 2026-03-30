@@ -51,7 +51,7 @@ def in_maintenance_mode(tpp_connection):
         # No events at all, we can't be in maintenance mode
         return False, 0
 
-    # Of the two most recently started builds, iddentify those that are ongoing (i.e.
+    # Of the two most recently started builds, identify those that are ongoing (i.e.
     # those with an end date of 9999-12-31)
     _, most_recent_end = latest_rebuilds[0]
     if most_recent_end.year < 9999:
@@ -62,19 +62,21 @@ def in_maintenance_mode(tpp_connection):
     ongoing_builds = [rebuild for rebuild in latest_rebuilds if rebuild[1].year == 9999]
     build_count = len(ongoing_builds)
 
-    # Check for incomplete events starting after the start of the earliest ongoing build
+    # Check for events starting on or after the start of the earliest ongoing build
     earliest_build_start_date = min(ongoing_builds)[0]
     cursor.execute(
         "SELECT Event, EventEnd FROM BuildProgress WHERE EventStart >= %s",
         earliest_build_start_date,
     )
-    current_events = {row[0] for row in cursor.fetchall() if row[1].year == 9999}
+    current_events = {row[0] for row in cursor.fetchall()}
 
     # Env var allows quick change of start event logic if needed
     start_events = os.environ.get(
         "TPP_MAINTENANCE_START_EVENT", "Swap Tables,CodedEvent_SNOMED"
     ).split(",")
 
+    # We start maintenance mode as soon as we see any of the "trigger" events
+    # and then don't exit until the entire build is finished
     in_maintenance_mode = bool(current_events.intersection(start_events))
 
     if not in_maintenance_mode:
@@ -85,6 +87,4 @@ def in_maintenance_mode(tpp_connection):
         except ProgrammingError:
             in_maintenance_mode = True
 
-    # We start maintenance mode as soon as we see any of the "trigger" events
-    # and then don't exit until the entire build is finished
     return in_maintenance_mode, build_count
