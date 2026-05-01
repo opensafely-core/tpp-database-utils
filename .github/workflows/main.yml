@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: "opensafely-core/setup-action@v1"
+      - uses: "opensafely-core/setup-action@v1.6.1"
         with:
           install-just: true
           install-uv: true
@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: "opensafely-core/setup-action@v1"
+      - uses: "opensafely-core/setup-action@v1.6.1"
         with:
           install-just: true
       - name: Run tests
