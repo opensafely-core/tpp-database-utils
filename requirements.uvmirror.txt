@@ -4,10 +4,10 @@ cfgv==3.5.0
     # via pre-commit
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
-coverage==7.15.4
+coverage==7.16.0
 distlib==0.4.3
     # via virtualenv
-filelock==3.32.4
+filelock==3.32.5
     # via
     #   python-discovery
     #   virtualenv
@@ -19,20 +19,20 @@ nodeenv==1.10.0
     # via pre-commit
 packaging==26.3
     # via pytest
-platformdirs==4.11.4
+platformdirs==4.11.7
     # via virtualenv
 pluggy==1.6.0
     # via pytest
 pre-commit==4.6.2
 pygments==2.21.0
     # via pytest
-pymssql==2.3.13
+pymssql==2.4.0
     # via tpp-database-utils
 pytest==9.1.1
-python-discovery==1.5.3
+python-discovery==1.6.0
     # via virtualenv
 pyyaml==6.0.3
     # via pre-commit
-ruff==0.16.4
-virtualenv==21.7.5
+ruff==0.16.5
+virtualenv==21.7.8
     # via pre-commit
